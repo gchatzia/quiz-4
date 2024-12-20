@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ "$1" = "" ]; then
+    echo "No input"
+elif [[ ! "$1" =~ ^[0-9]{4}$ ]]; then
+    echo "Make sure the input contains only integers and is exactly 4 digits long"
+else
+    echo -n "$1" | sha256sum | awk '{print $1}' > hash_output.txt
+    echo "Stored hash output to hash_output.txt"
+fi
