@@ -1,0 +1,114 @@
+i) Programs execution
+
+   The way to execute all the c programs is identical. First, an executable
+   must be created by compiling the code:
+   
+   gcc -o execName example<num>.c   # where <num> is the example number we want to compile
+
+   Then, we execute the program as follows:
+
+   ./execName
+
+   example3.c and example4.c require user interaction while running, by pressing ^C (to
+   send a SIGINT signal). The other programs operate on their own. 
+
+example1.c
+=========================
+ii) Example output
+
+Parent Process: PID = 3193594, Created Child PID = 3193595
+Child Process: PID = 3193595, Parent PID = 3193594
+total 132
+-rwxrwxr-x 1 gchatzia gchatzia 17048 Δεκ  20 23:43 example1
+-rw-rw-r-- 1 gchatzia gchatzia   855 Δεκ  13 19:22 example1.c
+-rwxrwxr-x 1 gchatzia gchatzia 16792 Δεκ  20 23:43 example2
+-rw-rw-r-- 1 gchatzia gchatzia   347 Δεκ  13 19:22 example2.c
+-rwxrwxr-x 1 gchatzia gchatzia 17000 Δεκ  20 23:43 example3
+-rw-rw-r-- 1 gchatzia gchatzia   643 Δεκ  13 19:22 example3.c
+-rwxrwxr-x 1 gchatzia gchatzia 17000 Δεκ  20 23:43 example4
+-rw-rw-r-- 1 gchatzia gchatzia   670 Δεκ  13 19:22 example4.c
+-rwxrwxr-x 1 gchatzia gchatzia 17168 Δεκ  20 23:43 example5
+-rw-rw-r-- 1 gchatzia gchatzia  1622 Δεκ  13 19:22 example5.c
+-rw-rw-r-- 1 gchatzia gchatzia  1252 Δεκ  13 19:26 lab04.tar.gz
+-rw-rw-r-- 1 gchatzia gchatzia   564 Δεκ  13 19:25 Makefile
+-rw-rw-r-- 1 gchatzia gchatzia   564 Δεκ  13 19:23 Makefile-lab04
+Parent Process: Child has terminated.
+
+iii) C code explanation
+
+This program is meant to demonstrate how new processes are created by using fork().
+When using fork, the child process by default has identical code, but a different pid.
+The program takes advantage of this fact to conditionaly run different blocks of the code,
+depending, on whether it is executed in the parent or child process. The parent process
+shows that the PIDs differ. The child process does the same, and then executes the "ls" 
+program.  
+
+example2.c
+=========================
+ii) Example Output
+
+Current Process ID (PID): 3193596
+Parent Process ID (PPID): 3193226
+
+iii) C code explanation
+
+Demonstrates that each process has it's own unique id, and that it is always spawned by
+a parent (having of course a different pid).
+
+example3.c
+=========================
+ii) Example Output
+
+Process ID: 3193597
+Press Ctrl+C to trigger SIGINT.
+Running... Press Ctrl+C to exit.
+^C
+Caught signal 2 (SIGINT). Exiting gracefully...
+
+iii) C code explanation
+
+The program assigns a function handler to be executed when a SIGINT signal is sent from
+the keyboard (by pressing ^C). It then runs in a never ending loop, waiting for the user
+to enter the signal. When the signal is sent, the handler informs the user that it was 
+indeed caught and then terminates.
+
+example4.c
+=========================
+ii) Example Output
+
+Process ID: 3193598
+Press Ctrl+C to attempt to send SIGINT.
+Running... Try pressing Ctrl+C.
+^C
+Received SIGINT (signal 2), but ignoring it.
+Running... Try pressing Ctrl+C.
+^C
+Received SIGINT (signal 2), but ignoring it.
+Running... Try pressing Ctrl+C.
+Running... Try pressing Ctrl+C.
+
+iii) C code explanation
+
+The structure is the same as example3.c, but the handler does not exit the program.  
+In order to stop this process, the user must set it to the background (so he can return
+to the parent terminal process) and kill it.
+
+example5.c
+=========================
+ii) Example Output
+
+Parent process ID: 3193603. Child PID: 3193604
+Child process ID: 3193604. Waiting for SIGUSR1...
+Parent sending SIGUSR1 to child.
+Child received SIGUSR1 (signal 10).
+Parent sending SIGTERM to child.
+Child process terminated.
+
+iii) C code explanation
+
+This program combines forking and sending signals between processes. The parent
+process creates a child process, which uses a function handler to notify if it received
+a SIGUSR1 signal, and then waits. After the child process creation, the parent sends the
+SIGUSR1 signal to the child with the "kill()" function. It waits one second, so that the 
+child can receive SIGUSR1. Finally, it sends a SIGTERM signal to terminate the child process
+and informs the user upon success. 
